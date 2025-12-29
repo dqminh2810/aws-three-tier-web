@@ -31,7 +31,7 @@
 
 
 ## ARCHITECTURE
-![Components_architecture](https://github.com/dqminh2810/PiggyMetric/blob/main/docs/3-tier-architecture.png)
+![Components_architecture](https://github.com/dqminh2810/aws-three-tier-web/blob/main/docs/3-tier-architecture.png)
 
-![RT_architecture](https://github.com/dqminh2810/PiggyMetric/blob/main/docs/route-table.png)
+![RT_architecture](https://github.com/dqminh2810/aws-three-tier-web/blob/main/docs/route-table.png)
 
