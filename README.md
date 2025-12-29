@@ -28,3 +28,10 @@
 `. ./setup-network.sh`
 
 `. ./setup-server.sh`
+
+
+## ARCHITECTURE
+![Components_architecture](https://github.com/dqminh2810/PiggyMetric/blob/main/docs/3-tier-architecture.png)
+
+![RT_architecture](https://github.com/dqminh2810/PiggyMetric/blob/main/docs/route-table.png)
+
