@@ -5,32 +5,24 @@ services:
     container_name: "localstack"
     image: localstack/localstack-pro:latest
     ports:
-      - "4566:4566" # LocalStack Gateway port
-      #- "4510-4559:4510-4559" # Older individual service ports (optional, but good practice)
+      - "4566:4566"
       - "8080:8080"
     environment:
-      # Set specific services to load on startup, or leave empty for all supported services
       - DEFAULT_REGION=us-east-1
-      # A dummy access key and secret key are needed by the AWS SDKs
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
-      - DEBUG=0 # Set to 1 for more verbose logs
+      - DEBUG=0
       - LOCALSTACK_AUTH_TOKEN=ls-HUzOsiba-DUjA-1963-0518-juGUVOyA15b8
     volumes:
-      # Mount the Docker socket to allow LocalStack to run Lambda functions in separate containers
       - "/var/run/docker.sock:/var/run/docker.sock"
-      # Persist data to a local directory named 'volume' on the host
       - "./volume:/var/lib/localstack"
   dynamodb-admin:
     container_name: "dynamodb-admin"
     image: aaronshaf/dynamodb-admin:latest
     ports:
-      # Maps the admin UI port 8001 on the host machine
       - "8001:8001"
     environment:
-      # Connects dynamodb-admin to the 'localstack' service endpoint within the Docker network
       - DYNAMO_ENDPOINT=http://localstack:4566
-      # Uses the same credentials as LocalStack
       - AWS_ACCESS_KEY_ID=local
       - AWS_SECRET_ACCESS_KEY=local
       - AWS_REGION=us-east-1
