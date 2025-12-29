@@ -41,4 +41,4 @@ cd ~/app-tier
 npm install
 pm2 start index.js
 
-EOFE
+EOF
