@@ -25,10 +25,13 @@
 
 
 ## SETUP
-`. ./setup-network.sh`
+- Setup AWS network - `. ./setup-network.sh`
 
-`. ./setup-server.sh`
+- Setup AWS DB & EC2 Instance - `. ./setup-server.sh <SG_4_ID> <SG_5_ID> <SUBNET_2> <SUBNET_3> <SUBNET_6>`
 
+- Init DB - `sudo apt-get install postgresql-client` then `psql -d testdb -U admin -p 4510 -h localhost -f ./initDB.sql -W`
+
+- Install server dependencies - `. ./install-server` <SSH_KEY_PATH <REMOTE_USER> <REMOTE_HOST>`
 
 ## ARCHITECTURE
 ![Components_architecture](https://github.com/dqminh2810/aws-three-tier-web/blob/main/docs/3-tier-architecture.png)
