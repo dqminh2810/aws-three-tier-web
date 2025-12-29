@@ -1,10 +1,10 @@
 # AWS THREE TIER WEB
 
-## Requirement
+## REQUIREMENT
 - awslocal CLI
 - docker
 
-## Check list AWS components
+## CHECK LIST AWS COMPONENTS
 #### APPLICATION COMPONENT
 - EC2 VM
 - DYNAMODB
