@@ -68,19 +68,6 @@ EC1_INSTANCE_ID=$(awslocal ec2 run-instances \
 awslocal ec2 wait instance-running --instance-ids $EC1_INSTANCE_ID
 EC1_PUBLIC_IP=$(awslocal ec2 describe-instances --instance-ids $EC1_INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
 
-#### EC2 Instance - AZ2 / us-east-1c
-EC2_INSTANCE_ID=$(awslocal ec2 run-instances \
-    --image-id ami-df5de72bdb3b \
-    --count 1 \
-    --instance-type t3.micro \
-    --key-name my-key \
-    --security-group-ids $SG_4_ID \
-    --subnet-id $SUBNET_5 \
-	--query 'Instances[0].InstanceId' \
-	--output text)
-awslocal ec2 wait instance-running --instance-ids $EC2_INSTANCE_ID
-EC2_PUBLIC_IP=$(awslocal ec2 describe-instances --instance-ids $EC2_INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
-
 
 ## S3
 awslocal s3 mb s3://my-local-bucket
