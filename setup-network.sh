@@ -92,6 +92,11 @@ SG_4_ID=$(awslocal ec2 create-security-group --group-name app-tier-instance-sg -
 awslocal ec2 authorize-security-group-ingress \
     --group-id $SG_4_ID \
     --protocol tcp \
+    --port 22 \
+	--source-group $SG_3_ID
+awslocal ec2 authorize-security-group-ingress \
+    --group-id $SG_4_ID \
+    --protocol tcp \
     --port 4000 \
 	--source-group $SG_3_ID
 	
@@ -100,43 +105,6 @@ SG_5_ID=$(awslocal ec2 create-security-group --group-name db-tier-instance-sg --
 awslocal ec2 authorize-security-group-ingress \
     --group-id $SG_5_ID \
     --protocol tcp \
-    --port 4566 \
+    --port 4510 \
 	--source-group $SG_4_ID
-	
-
-#### OUTPUT
-echo "*******VPC*******"
-echo "VPC_ID = $VPC_ID"
-echo '\n'
-
-echo "*******SUBNET*******"
-echo "SUBNET_1 = $VPC_ID"
-echo "SUBNET_2 = $SUBNET_2"
-echo "SUBNET_3 = $SUBNET_3"
-echo "SUBNET_4 = $SUBNET_4"
-echo "SUBNET_5 = $SUBNET_5"
-echo "SUBNET_6 = $SUBNET_6"
-echo '\n'
-
-echo "*******GATEWAY*******"
-echo "IGW_ID = $IGW_ID"
-echo "EIP_1_ID = $EIP_1_ID"
-echo "NGW_1_ID = $NGW_1_ID"
-echo "EIP_2_ID = $EIP_2_ID"
-echo "NGW_2_ID = $NGW_2_ID"
-echo '\n'
-
-echo "*******ROUTE TABLE*******"
-echo "PUBLIC_RT_ID = $PUBLIC_RT_ID"
-echo "PRIVATE_RT_1_ID = $PRIVATE_RT_1_ID"
-echo "PRIVATE_RT_2_ID = $PRIVATE_RT_2_ID"
-echo '\n'
-
-echo "*******SECURITY GROUP*******"
-echo "SG_1_ID = $SG_1_ID"
-echo "SG_2_ID = $SG_2_ID"
-echo "SG_3_ID = $SG_3_ID"
-echo "SG_4_ID = $SG_4_ID"
-echo "SG_5_ID = $SG_5_ID"
-echo '\n'
 

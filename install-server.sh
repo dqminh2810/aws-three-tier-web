@@ -8,13 +8,8 @@ REMOTE_HOST=$3
 ssh -i $SSH_KEY_PATH $REMOTE_USER@$REMOTE_HOST -p 22 'bash -s' <<'EOF'
 # This is the script content that runs on the remote server
 
-apt-get update
-apt-get install -y unzip
-
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-./aws/install
-rm -rf awscliv2.zip aws
+apt update
+DEBIAN_FRONTEND=noninteractive apt install -y awscli
 
 export AWS_ACCESS_KEY_ID="test"
 export AWS_SECRET_ACCESS_KEY="test"
