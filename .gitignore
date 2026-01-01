@@ -1,0 +1,4 @@
+volume/
+**.pem
+output.txt
+**/node_modules/

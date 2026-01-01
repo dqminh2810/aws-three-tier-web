@@ -10,18 +10,17 @@ source ./setup-network.sh
 # Setup AWS DB & EC2 Instance - AZ1/us-east-1a
 source ./setup-server.sh $SG_4_ID $SG_5_ID $SUBNET_2 $SUBNET_3 $SUBNET_5 $SUBNET_6
 
-# Install EC2 instance dependencies
+# Install EC2 instance dependencies - AZ1/us-east-1a
 source ./install-server.sh ./my-key.pem root $EC1_PUBLIC_IP
 
 # Create a docker image copy from EC2 instance container
-docker commit -a "admin" -m "Installed neccessary dependencies" localstack-ec2.$EC1_INSTANCE_ID localstack-ec2/ubuntu-22.04-jammy-jellyfish:ami-000001 
+docker commit -a "admin" -m "Installed neccessary dependencies" localstack-ec2.$EC1_INSTANCE_ID localstack-ec2/ubuntu-22.04-jammy-jellyfish:ami-000001
 
 # Setup EC2 Instance - AZ2/us-east-1c
 EC2_INSTANCE_ID=$(awslocal ec2 run-instances \
     --image-id ami-000001 \
     --count 1 \
     --instance-type t3.micro \
-    --key-name my-key \
     --security-group-ids $SG_4_ID \
     --subnet-id $SUBNET_5 \
 	--query 'Instances[0].InstanceId' \
@@ -30,6 +29,11 @@ EC2_INSTANCE_ID=$(awslocal ec2 run-instances \
 awslocal ec2 wait instance-running --instance-ids $EC2_INSTANCE_ID
 
 EC2_PUBLIC_IP=$(awslocal ec2 describe-instances --instance-ids $EC2_INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+
+# Init manually server
+ssh -i $SSH_KEY_PATH $REMOTE_USER@$REMOTE_HOST -p 22 'bash -s' <<'EOF'
+pm2 start index.js
+EOF
 
 # Init DB
 psql -d testdb -U admin -p 4510 -h localhost -f initDB.sql -W
