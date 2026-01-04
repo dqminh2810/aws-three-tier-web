@@ -76,6 +76,11 @@ SG_2_ID=$(awslocal ec2 create-security-group --group-name web-tier-instance-sg -
 awslocal ec2 authorize-security-group-ingress \
     --group-id $SG_2_ID \
     --protocol tcp \
+    --port 22 \
+	--source-group $SG_1_ID
+awslocal ec2 authorize-security-group-ingress \
+    --group-id $SG_2_ID \
+    --protocol tcp \
     --port 80 \
 	--source-group $SG_1_ID
 

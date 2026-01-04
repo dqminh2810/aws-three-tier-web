@@ -7,8 +7,8 @@
 ## CHECK LIST AWS COMPONENTS
 #### APPLICATION COMPONENT
 - EC2 VM
-- DYNAMODB
-
+- RDS
+- S3
 
 #### NETWORK COMPONENT
 - ELB
@@ -26,7 +26,17 @@
 
 ## SETUP
 
-`. ./setup.sh`
+`cd setup && source setup.sh`
+
+## CHECK
+
+- Show output info - `cat output.txt`
+
+- Check web tier health - `curl <WEB_TIER_LB_DNS_NAME>:4566/health`
+
+- Check app tier health - `curl <WEB_TIER_LB_DNS_NAME>:4566/api/health`
+
+- Check db tier working - `curl <WEB_TIER_LB_DNS_NAME>:4566/api/transaction`
 
 ## ARCHITECTURE
 ![Components_architecture](https://github.com/dqminh2810/aws-three-tier-web/blob/main/docs/3-tier-architecture.png)
