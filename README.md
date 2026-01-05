@@ -2,6 +2,7 @@
 
 ## REQUIREMENT
 - awslocal CLI
+- localstack ver Pro
 - docker
 
 ## CHECK LIST AWS COMPONENTS
@@ -27,9 +28,9 @@
 ## SETUP
 - Update your DB address [./application-code/app-tier/DbConfig.js] & LocalStack token [./docker-compose.yaml]
 
-`docker compose up` || `docker compose down` || `docker ps -qa | xargs docker rm`
+- `docker compose up` || `docker compose down` || `docker ps -qa | xargs docker rm`
 
-`cd setup && source setup.sh`
+- `cd setup && source setup.sh`
 
 ## CHECK
 
