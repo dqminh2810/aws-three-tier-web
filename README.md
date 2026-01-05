@@ -25,6 +25,7 @@
 
 
 ## SETUP
+`docker compose up` || `docker compose down` || `docker ps -qa | xargs docker rm`
 
 `cd setup && source setup.sh`
 
