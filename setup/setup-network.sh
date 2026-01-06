@@ -44,22 +44,22 @@ awslocal ec2 create-tags --resources $NGW_2_ID --tags Key=name,Value=three-tier-
 
 ## ROUTE TABLE
 #### PUBLIC SUBNET
-PUBLIC_RT_ID=$(awslocal ec2 create-route-table --vpc-id $VPC_ID --endpoint-url=http://localhost:4566 --query 'RouteTable.RouteTableId' --output text)
+PUBLIC_RT_ID=$(awslocal ec2 create-route-table --vpc-id $VPC_ID --query 'RouteTable.RouteTableId' --output text)
 awslocal ec2 create-tags --resources $PUBLIC_RT_ID --tags Key=name,Value=three-tier-ngw-2
-awslocal ec2 create-route --route-table-id $PUBLIC_RT_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID --endpoint-url=http://localhost:4566
-awslocal ec2 associate-route-table --route-table-id $PUBLIC_RT_ID --subnet-id $SUBNET_1 --endpoint-url=http://localhost:4566
-awslocal ec2 associate-route-table --route-table-id $PUBLIC_RT_ID --subnet-id $SUBNET_4 --endpoint-url=http://localhost:4566
+awslocal ec2 create-route --route-table-id $PUBLIC_RT_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID
+awslocal ec2 associate-route-table --route-table-id $PUBLIC_RT_ID --subnet-id $SUBNET_1
+awslocal ec2 associate-route-table --route-table-id $PUBLIC_RT_ID --subnet-id $SUBNET_4
 
 #### PRIVATE SUBNET
-PRIVATE_RT_1_ID=$(awslocal ec2 create-route-table --vpc-id $VPC_ID --endpoint-url=http://localhost:4566 --query 'RouteTable.RouteTableId' --output text)
-awslocal ec2 create-route --route-table-id $PRIVATE_RT_1_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $NGW_1_ID --endpoint-url=http://localhost:4566
-awslocal ec2 associate-route-table --route-table-id $PRIVATE_RT_1_ID --subnet-id $SUBNET_2 --endpoint-url=http://localhost:4566
-awslocal ec2 associate-route-table --route-table-id $PRIVATE_RT_1_ID --subnet-id $SUBNET_5 --endpoint-url=http://localhost:4566
+PRIVATE_RT_1_ID=$(awslocal ec2 create-route-table --vpc-id $VPC_ID --query 'RouteTable.RouteTableId' --output text)
+awslocal ec2 create-route --route-table-id $PRIVATE_RT_1_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $NGW_1_ID
+awslocal ec2 associate-route-table --route-table-id $PRIVATE_RT_1_ID --subnet-id $SUBNET_2
+awslocal ec2 associate-route-table --route-table-id $PRIVATE_RT_1_ID --subnet-id $SUBNET_5
 
-PRIVATE_RT_2_ID=$(awslocal ec2 create-route-table --vpc-id $VPC_ID --endpoint-url=http://localhost:4566 --query 'RouteTable.RouteTableId' --output text)
-awslocal ec2 create-route --route-table-id $PRIVATE_RT_2_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $NGW_2_ID --endpoint-url=http://localhost:4566
-awslocal ec2 associate-route-table --route-table-id $PRIVATE_RT_2_ID --subnet-id $SUBNET_3 --endpoint-url=http://localhost:4566
-awslocal ec2 associate-route-table --route-table-id $PRIVATE_RT_2_ID --subnet-id $SUBNET_6 --endpoint-url=http://localhost:4566
+PRIVATE_RT_2_ID=$(awslocal ec2 create-route-table --vpc-id $VPC_ID --query 'RouteTable.RouteTableId' --output text)
+awslocal ec2 create-route --route-table-id $PRIVATE_RT_2_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $NGW_2_ID
+awslocal ec2 associate-route-table --route-table-id $PRIVATE_RT_2_ID --subnet-id $SUBNET_3
+awslocal ec2 associate-route-table --route-table-id $PRIVATE_RT_2_ID --subnet-id $SUBNET_6
 
 
 ## SECURITY GROUP
