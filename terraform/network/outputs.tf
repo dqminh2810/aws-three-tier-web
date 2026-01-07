@@ -26,7 +26,7 @@ output "pri_sub_5_id" {
   value = aws_subnet.pri_sub_5.id
 }
 
-output "pri_sub_b_id" {
+output "pri_sub_6_id" {
     value = aws_subnet.pri_sub_6.id 
 }
 
