@@ -26,14 +26,23 @@
 
 
 ## SETUP
+#### LocalStack
 - Update your DB address [./application-code/app-tier/DbConfig.js] & LocalStack token [./docker-compose.yaml]
 
 - `docker compose up` || `docker compose down` || `docker ps -qa | xargs docker rm`
 
 - `cd setup && source setup.sh`
 
-## CHECK
+####AWS
+- `terraform init`
 
+- `terraform plan`
+
+- `terraform apply -auto-approve`
+
+- `terraform destroy -auto-approve` 
+
+## CHECK
 - Show output info - `cat output.txt`
 
 - Check web tier health - `curl <WEB_TIER_LB_DNS_NAME>:4566/health`
