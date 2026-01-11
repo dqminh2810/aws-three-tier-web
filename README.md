@@ -33,7 +33,7 @@
 
 - `cd setup && source setup.sh`
 
-####AWS
+#### AWS
 - `terraform init`
 
 - `terraform plan`
