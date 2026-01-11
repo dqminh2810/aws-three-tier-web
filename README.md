@@ -16,7 +16,6 @@
 - INTERNET GATEWAY
 - NAT GATEWAY
 
-
 #### NETWORK MANAGEMENT ABSTRACTION
 - VPC
 - SUBNET
@@ -24,8 +23,12 @@
 - ROUTE TABLE
 - SECURITY GROUP
 
+#### SCALE
+- AUTO SCACLING
+- EKS
 
 ## SETUP
+### With AutoScaling
 #### LocalStack
 - Update your DB address [./application-code/app-tier/DbConfig.js] & LocalStack token [./docker-compose.yaml]
 
@@ -33,7 +36,7 @@
 
 - `cd setup && source setup.sh`
 
-#### AWS
+#### Terraform + AWS
 - `terraform init`
 
 - `terraform plan`
@@ -41,6 +44,8 @@
 - `terraform apply -auto-approve`
 
 - `terraform destroy -auto-approve` 
+
+### With EKS
 
 ## CHECK
 - Show output info - `cat output.txt`
