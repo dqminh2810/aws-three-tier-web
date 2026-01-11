@@ -41,23 +41,24 @@
 
 - `terraform plan`
 
-- `terraform apply -auto-approve`
+- `terraform apply`
 
-- `terraform destroy -auto-approve` 
+- `terraform destroy` 
 
 ### With EKS
 
 ## CHECK
 - Show output info - `cat output.txt`
 
-- Check web tier health - `curl <WEB_TIER_LB_DNS_NAME>:4566/health`
+- Check web tier health - `curl <WEB_TIER_LB_DNS_NAME>:<4566:80>/health`
 
-- Check app tier health - `curl <WEB_TIER_LB_DNS_NAME>:4566/api/health`
+- Check app tier health - `curl <WEB_TIER_LB_DNS_NAME>:<4566:80>/api/health`
 
-- Check db tier working - `curl <WEB_TIER_LB_DNS_NAME>:4566/api/transaction`
+- Check db tier working - `curl <WEB_TIER_LB_DNS_NAME>:<4566:80>/api/transaction`
 
 ## ARCHITECTURE
-![Components_architecture](https://github.com/dqminh2810/aws-three-tier-web/blob/main/docs/3-tier-architecture.png)
+![Components_architecture_ASG](https://github.com/dqminh2810/aws-three-tier-web/blob/main/docs/3-tier-architecture.png)
 
-![RT_architecture](https://github.com/dqminh2810/aws-three-tier-web/blob/main/docs/route-table.png)
+![Components_architecture_EKS](https://github.com/dqminh2810/aws-three-tier-web/blob/main/docs/eks-3-tier-architecture.png)
+
 
