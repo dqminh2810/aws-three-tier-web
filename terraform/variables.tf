@@ -27,3 +27,4 @@ variable "pri_sub_5_cidr" {}
 variable "pri_sub_6_cidr" {}
 variable "db_username" {}
 variable "db_password" {}
+variable "db_port" {}

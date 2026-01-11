@@ -1,4 +1,4 @@
-
+/**
 resource "aws_db_subnet_group" "db_subnet" {
     name = "my-subnet-group" 
     subnet_ids = [ var.pri_sub_5_id,var.pri_sub_6_id]
@@ -21,7 +21,7 @@ resource "aws_rds_cluster_instance" "db_cluster_instance_1" {
     instance_class     = "db.r5.large"
     engine             = aws_rds_cluster.db_cluster.engine
     engine_version     = aws_rds_cluster.db_cluster.engine_version
-    port               = var.db_port
+    #port               = var.db_port
     db_subnet_group_name = aws_db_subnet_group.db_subnet.name
     availability_zone  = "us-east-1a"
 }
@@ -33,7 +33,7 @@ resource "aws_rds_cluster_instance" "db_cluster_instance_2" {
     instance_class     = "db.r5.large"
     engine             = aws_rds_cluster.db_cluster.engine
     engine_version     = aws_rds_cluster.db_cluster.engine_version
-    port               = var.db_port
+    #port               = var.db_port
     db_subnet_group_name = aws_db_subnet_group.db_subnet.name
     availability_zone  = "us-east-1c"
 }
@@ -52,3 +52,4 @@ resource "null_resource" "db_init_data" {
     }
     depends_on = [aws_rds_cluster_instance.db_cluster_instance_1, aws_rds_cluster_instance.db_cluster_instance_2]
 }
+**/

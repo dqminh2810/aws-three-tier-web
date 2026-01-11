@@ -32,7 +32,7 @@ output "pri_sub_6_id" {
 
 # INTERNET GATEWAY
 output "igw_id" {
-    value = aws_internet_gateway.internet_gateway
+    value = aws_internet_gateway.internet_gateway.id
 }
 
 # NAT GATEWAY
@@ -54,7 +54,7 @@ output "web-tier_sg_id" {
 }
 
 output "internal-alb_sg_id" {
-    value = aws_security_group.internal-alb_sg
+    value = aws_security_group.internal-alb_sg.id
 }
 
 output "app-tier_sg_id" {

@@ -7,6 +7,15 @@ SUBNET_5=$3
 SG_4_ID=$4
 EC2_INSTANCE_ID=$5
 
+# Create load balancer
+LB_ARN=$(awslocal elbv2 create-load-balancer \
+    --name app-tier-internal-lb \
+    --type application \
+	--scheme internal \
+    --subnets $SUBNET_2 $SUBNET_5 \
+    --security-groups $SG_4_ID \
+	| jq -r '.LoadBalancers[0].LoadBalancerArn')
+	
 # Create target group
 TG_ARN=$(awslocal elbv2 create-target-group \
   --name app-tier-tg \
@@ -18,16 +27,6 @@ TG_ARN=$(awslocal elbv2 create-target-group \
   --health-check-port 4000 \
   --health-check-path /health \
   | jq -r '.TargetGroups[].TargetGroupArn')
-
-
-# Create load balancer
-LB_ARN=$(awslocal elbv2 create-load-balancer \
-    --name app-tier-internal-lb \
-    --type application \
-	--scheme internal \
-    --subnets $SUBNET_2 $SUBNET_5 \
-    --security-groups $SG_4_ID \
-	| jq -r '.LoadBalancers[0].LoadBalancerArn')
 
 
 # Forward traffic from load balancer to target group
