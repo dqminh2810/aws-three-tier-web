@@ -4,6 +4,7 @@ volume/
 **/**.pem
 **/ssh/
 **/node_modules/
-terraform/.terraform**
-terraform/key/ssh/
-terraform/terraform.**
+terraform/**/.terraform/
+terraform/**/.terraform**
+terraform/**/key/ssh/
+terraform/**/terraform.**
