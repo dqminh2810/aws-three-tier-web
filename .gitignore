@@ -1,6 +1,8 @@
 volume/
 **.pem
-output.txt
+**/output.txt
+**/**.pem
+**/ssh/
 **/node_modules/
 terraform/.terraform**
 terraform/key/ssh/
