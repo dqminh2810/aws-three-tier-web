@@ -8,3 +8,4 @@ terraform/**/.terraform/
 terraform/**/.terraform**
 terraform/**/key/ssh/
 terraform/**/terraform.**
+..bfg-report

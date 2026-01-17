@@ -30,18 +30,29 @@ Build Secure, and High-Performance Web Applications scalable following 2 styles 
 - AUTO SCALING
 
 ## SETUP
-### With EKS
-___`Check it out`___
-
-### With AutoScaling
-#### LocalStack
-- Update your DB address [./application-code/app-tier/DbConfig.js] & LocalStack token [./docker-compose.yaml]
+### LocalStack Server
+- Update your LocalStack token [./docker-compose.yaml]
 
 - `docker compose up` || `docker compose down` || `docker ps -qa | xargs docker rm`
 
-- `cd setup && source setup.sh`
+### AWS Components - EKS Version
+#### LocalStack
+- `cd setup/eks && source setup.sh`
+
+- Follow `k8s.sh` to create k8s elements
 
 #### Terraform + AWS
+`Check it out`
+
+### AWS Components - Standard Verison (with AutoScaling)
+#### LocalStack
+- Update your DB address [./application-code/app-tier/DbConfig.js]
+
+- `cd setup/standard && source setup.sh`
+
+#### Terraform + AWS
+- `cd terraform/standard`
+
 - `terraform init`
 
 - `terraform plan`
@@ -63,6 +74,5 @@ ___`Check it out`___
 ### EKS
 ![Components_architecture_EKS](https://github.com/dqminh2810/aws-three-tier-web/blob/main/docs/eks-3-tier-architecture.png)
 
-### Auto Scaling
+### Standard vesrion - with Auto Scaling
 ![Components_architecture_ASG](https://github.com/dqminh2810/aws-three-tier-web/blob/main/docs/3-tier-architecture.png)
-
