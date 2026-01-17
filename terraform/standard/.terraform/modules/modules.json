@@ -1,1 +1,0 @@
-{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"alb","Source":"./alb","Dir":"alb"},{"Key":"asg","Source":"./asg","Dir":"asg"},{"Key":"ec2-instance","Source":"./ec2_instance","Dir":"ec2_instance"},{"Key":"key","Source":"./key","Dir":"key"},{"Key":"network","Source":"./network","Dir":"network"},{"Key":"rds","Source":"./rds","Dir":"rds"}]}
