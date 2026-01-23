@@ -1,0 +1,40 @@
+| **Kind**                           | **apiVersion**               | **Used For**                                                            |
+| ---------------------------------- | ---------------------------- | ----------------------------------------------------------------------- |
+Core "Workload"
+| **Pod**                            | v1                           | Smallest unit, runs containers.                                         |
+| **ReplicaSet**                     | apps/v1                      | Ensures a fixed number of Pods are running.                             |
+| **Deployment**                     | apps/v1                      | Manages Pods/ReplicaSets, rolling updates.                              |
+| **StatefulSet**                    | apps/v1                      | Like Deployment, but with stable Pod IDs and persistent storage.        |
+| **DaemonSet**                      | apps/v1                      | Ensures one Pod per Node (e.g., monitoring/logging agents).             |
+| **Job**                            | batch/v1                     | Runs Pods until they finish successfully.                               |
+| **CronJob**                        | batch/v1                     | Runs Jobs on a schedule (like cron).                                    |
+
+
+Service & Networking
+| **Service**                        | v1                           | Exposes Pods internally/externally (ClusterIP, NodePort, LoadBalancer). |
+| **Ingress**                        | networking.k8s.io/v1         | HTTP/HTTPS routing into the cluster (via Ingress Controller).           |
+| **NetworkPolicy**                  | networking.k8s.io/v1         | Firewall rules controlling Pod-to-Pod/namespace communication.          |
+
+
+Configuration
+| **ConfigMap**                      | v1                           | Stores non-sensitive configuration (env vars, files).                   |
+| **Secret**                         | v1                           | Stores sensitive data (passwords, tokens, certs).                       |
+| **ResourceQuota**                  | v1                           | Limits CPU, memory, and object counts per namespace.                    |
+| **LimitRange**                     | v1                           | Sets default/request/limit values for containers/Pods.                  |
+
+
+Storage
+| **PersistentVolume (PV)**          | v1                           | Represents a piece of storage in the cluster.                           |
+| **PersistentVolumeClaim (PVC)**    | v1                           | A Pod’s request for storage from a PV.                                  |
+| **StorageClass**                   | storage.k8s.io/v1            | Defines how storage is provisioned dynamically (e.g., SSD, HDD).        |
+
+
+Cluster & Node
+| **Namespace**                      | v1                           | Virtual cluster within the cluster (isolates resources).                |
+| **Node**                           | v1                           | Represents a worker node (machine/VM).                                  |
+| **Role**                           | rbac.authorization.k8s.io/v1 | Defines permissions for resources within a namespace.                   |
+| **ClusterRole**                    | rbac.authorization.k8s.io/v1 | Defines cluster-wide permissions.                                       |
+| **RoleBinding**                    | rbac.authorization.k8s.io/v1 | Binds a Role to users/service accounts.                                 |
+| **ClusterRoleBinding**             | rbac.authorization.k8s.io/v1 | Binds a ClusterRole cluster-wide.                                       |
+| **ServiceAccount**                 | v1                           | Identity used by Pods to access cluster resources.                      |
+| **CustomResourceDefinition (CRD)** | apiextensions.k8s.io/v1      | Define custom resource kinds (for extensions like Istio, Argo, etc.).   |

@@ -49,7 +49,7 @@ awslocal eks create-cluster \
 	--role-arn arn:awslocal:iam::*******************:role/custom=1 \
 	--resources-vpc-config subnetIds=$SUBNET_1_ID,$SUBNET_2_ID,securityGroupIds=$SG_EKS_ID
 awslocal eks wait cluster-active --name eks-demo
-awslocal eks describe-cluster --name eks-demo
+# awslocal eks describe-cluster --name eks-demo
 
 ## EC2 SSH KEY
 awslocal ec2 create-key-pair \
@@ -68,7 +68,7 @@ awslocal eks create-nodegroup \
 	--instance-types t3.medium \
 	--ami-type AL2_x86_64
 awslocal eks wait nodegroup-active --cluster-name eks-demo --nodegroup-name eks-demo-node-group
-awslocal eks describe-nodegroup --cluster-name eks-demo --nodegroup-name eks-demo-node-group
+# awslocal eks describe-nodegroup --cluster-name eks-demo --nodegroup-name eks-demo-node-group
 
 ## KUBECONFIG FILE
 awslocal eks update-kubeconfig \

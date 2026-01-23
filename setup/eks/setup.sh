@@ -2,7 +2,7 @@
 set -e
 
 # Setup EKS cluster
-source ./setup-network.sh
+source ./setup-eks-cluster.sh
 
 # Setup RDS
 source ./setup-server-db-tier.sh $SUBNET_1_ID $SUBNET_2_ID $VPC_ID
