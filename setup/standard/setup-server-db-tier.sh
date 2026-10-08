@@ -1,50 +1,42 @@
 #!/bin/bash
 set -e
 
+if [[ $# -ne 3 ]]; then
+    echo "Error Usage : $0 <SG_5_ID> <SUBNET_3> <SUBNET_6>"
+    exit 1
+fi
+
 SG_5_ID=$1
 SUBNET_3=$2
 SUBNET_6=$3
 
 ## RDS
-awslocal rds create-db-subnet-group \
+aws rds create-db-subnet-group \
     --db-subnet-group-name my-subnet-group \
     --db-subnet-group-description "My LocalStack DB Subnet Group" \
     --subnet-ids $SUBNET_3 $SUBNET_6
 
 #### RDS - Cluster 
-awslocal rds create-db-cluster \
+aws rds create-db-cluster \
 	--db-cluster-identifier my-db-cluster \
 	--engine aurora-postgresql \
 	--database-name testdb \
-	--master-username admin \
-	--master-user-password password
+	--master-username root \
+	--master-user-password rootpassword
 
-#### RDS - Instance - AZ1 / us-east-1a
-awslocal rds create-db-instance \
+#### RDS - Instance - AZ1 / ap-southeast-1a
+aws rds create-db-instance \
     --db-instance-identifier my-db-instance-az1 \
 	--db-cluster-identifier my-db-cluster \
-	--port 4510 \
     --engine aurora-postgresql \
     --db-instance-class db.r5.large \
-	--availability-zone us-east-1a \
-    --db-subnet-group-name my-subnet-group \
-    --vpc-security-group-ids $SG_5_ID \
-    --publicly-accessible
-
-#### RDS - Instance - AZ2 / us-east-1c
-awslocal rds create-db-instance \
-    --db-instance-identifier my-db-instance-az2 \
-	--db-cluster-identifier my-db-cluster \
-	--port 4510 \
-    --engine aurora-postgresql \
-    --db-instance-class db.r5.large \
-	--availability-zone us-east-1c \
-    --db-subnet-group-name my-subnet-group \
-    --vpc-security-group-ids $SG_5_ID \
+	--availability-zone ap-southeast-1a \
     --publicly-accessible
 	
 ## Init DB
-awslocal rds wait db-cluster-available --db-cluster-identifier my-db-cluster
-awslocal rds wait db-instance-available --db-instance-identifier my-db-instance-az1
-awslocal rds wait db-instance-available --db-instance-identifier my-db-instance-az2
-PGPASSWORD="password" psql -d testdb -U admin -p 4510 -h localhost -f initDB.sql
+aws rds wait db-cluster-available --db-cluster-identifier my-db-cluster
+aws rds wait db-instance-available --db-instance-identifier my-db-instance-az1
+
+## Migrate data to RDS
+RDSHOST=$(aws rds describe-db-instances --db-instance-identifier my-db-instance-az1 --query 'DBInstances[0].Endpoint.Address' --output text)
+PGPASSWORD="rootpassword" psql "host=$RDSHOST port=5432 dbname=testdb user=root sslmode=verify-full sslrootcert=./global-bundle.pem" -f initDB.sql

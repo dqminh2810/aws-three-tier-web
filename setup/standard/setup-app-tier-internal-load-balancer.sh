@@ -1,23 +1,19 @@
 #!/bin/bash
 set -e
+if [[ $# -ne 5 ]]; then
+    echo "Error Usage : $0 <VPC_ID> <SG_3_ID> <SUBNET_2> <SUBNET_5> <EC1_INSTANCE_ID>"
+    exit 1
+fi
 
 VPC_ID=$1
-SUBNET_2=$2
-SUBNET_5=$3
-SG_4_ID=$4
-EC2_INSTANCE_ID=$5
+SG_3_ID=$2
+SUBNET_2=$3
+SUBNET_5=$4
+EC1_INSTANCE_ID=$5
 
-# Create load balancer
-LB_ARN=$(awslocal elbv2 create-load-balancer \
-    --name app-tier-internal-lb \
-    --type application \
-	--scheme internal \
-    --subnets $SUBNET_2 $SUBNET_5 \
-    --security-groups $SG_4_ID \
-	| jq -r '.LoadBalancers[0].LoadBalancerArn')
-	
-# Create target group
-TG_ARN=$(awslocal elbv2 create-target-group \
+# TARGET GROUP
+## Create target group
+APP_TIER_TG_ARN=$(aws elbv2 create-target-group \
   --name app-tier-tg \
   --protocol HTTP \
   --port 4000 \
@@ -28,40 +24,27 @@ TG_ARN=$(awslocal elbv2 create-target-group \
   --health-check-path /health \
   | jq -r '.TargetGroups[].TargetGroupArn')
 
+## Register targets to target group
+aws elbv2 register-targets \
+    --target-group-arn $APP_TIER_TG_ARN \
+    --targets Id=$EC1_INSTANCE_ID
 
-# Forward traffic from load balancer to target group
-awslocal elbv2 create-listener \
-    --load-balancer-arn $LB_ARN \
+# LOAD BALANCER
+## Create load balancer
+APP_TIER_LB_ARN=$(aws elbv2 create-load-balancer \
+    --name app-tier-internal-lb \
+    --type application \
+	--scheme internal \
+    --subnets $SUBNET_2 $SUBNET_5 \
+    --security-groups $SG_3_ID \
+	| jq -r '.LoadBalancers[0].LoadBalancerArn')
+
+# LISTENER
+## Forward traffic from load balancer to target group
+aws elbv2 create-listener \
+    --load-balancer-arn $APP_TIER_LB_ARN \
     --protocol HTTP \
     --port 80 \
-    --default-actions Type=forward,TargetGroupArn=$TG_ARN
+    --default-actions Type=forward,TargetGroupArn=$APP_TIER_TG_ARN
 
-LB_DNS_NAME=$(awslocal elbv2 describe-load-balancers --load-balancer-arns $LB_ARN --query 'LoadBalancers[0].DNSName' --output text)
-
-
-# Create Launch Template
-LT_ID=$(awslocal ec2 create-launch-template \
-    --launch-template-name app-tier-launch-template \
-    --version-description v1 \
-    --launch-template-data '{
-        "ImageId": "ami-000001",
-        "InstanceType": "t3.micro",
-		"SecurityGroupIds": ["'$SG_4_ID'"]
-    }' \
-	--query 'LaunchTemplate.LaunchTemplateId' --output text)
-
-
-# Create Auto Scaling
-awslocal autoscaling create-auto-scaling-group \
-    --auto-scaling-group-name app-tier-asg \
-    --launch-template LaunchTemplateId=$LT_ID \
-    --min-size 1 \
-    --max-size 5 \
-    --vpc-zone-identifier "$SUBNET_2,$SUBNET_5" \
-	--target-group-arns $TG_ARN
-	
-	
-## Only for localstack bcz it do not create the real instance automatically but rather the mock ones
-awslocal autoscaling attach-instances \
-    --instance-ids $EC2_INSTANCE_ID \
-    --auto-scaling-group-name app-tier-asg
+APP_TIER_LB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $APP_TIER_LB_ARN --query 'LoadBalancers[0].DNSName' --output text)

@@ -21,24 +21,35 @@ app.get('/health',(req,res)=>{
 });
 
 // ADD TRANSACTION
-app.post('/transaction', (req,res)=>{
-    var response = "";
-    try{
-        console.log(req.body);
-        console.log(req.body.amount);
-        console.log(req.body.desc);
-        var success = transactionService.addTransaction(req.body.amount,req.body.desc);
-        if (success = 200) res.json({ message: 'added transaction successfully'});
-    }catch (err){
-        res.json({ message: 'something went wrong', error : err.message});
+app.post('/transaction', (req, res) => {
+    try {
+        console.log("Incoming body:", req.body);
+        
+        transactionService.addTransaction(req.body.amount, req.body.desc, function(err, result) {
+            // Check if the database passed an error back
+            if (err) {
+                return res.status(500).json({ 
+                    message: 'Database insertion failed', 
+                    error: err.message 
+                });
+            }
+            
+            console.log("We are successfully in the callback:", result);
+            res.statusCode = 200;
+            return res.json({ message: 'added transaction successfully' });
+        });
+    } catch (err) {
+        // This only catches synchronous errors before the async database call
+        res.status(500).json({ message: 'something went wrong', error: err.message });
     }
 });
+
 
 // GET ALL TRANSACTIONS
 app.get('/transaction',(req,res)=>{
     try{
         var transactionList = [];
-       transactionService.getAllTransactions(function (results) {
+        transactionService.getAllTransactions(function (results) {
             console.log("we are in the call back:");
             for (const row of results) {
                 transactionList.push({ "id": row.id, "amount": row.amount, "description": row.description });

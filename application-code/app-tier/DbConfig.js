@@ -1,7 +1,7 @@
 module.exports = Object.freeze({
-    DB_HOST : 'postgres-db.3-tier-app-eks.svc.cluster.local',
-    DB_PORT : '4511',
-    DB_USER : 'admin',
-    DB_PWD : 'password',
+    DB_HOST : 'my-db-instance-az1.cls86umsk64k.ap-southeast-1.rds.amazonaws.com',
+    DB_PORT : '5432',
+    DB_USER : 'root',
+    DB_PWD : 'rootpassword',
     DB_DATABASE : 'testdb'
 });

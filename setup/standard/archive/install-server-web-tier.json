@@ -1,0 +1,36 @@
+{
+  "workingDirectory": ["/home/ubuntu"],
+  "commands": [
+    "#!/bin/bash",
+    "# 1. Cập nhật hệ thống bằng quyền root",
+    "sudo apt-get update -y",
+    "sudo apt-get install -y awscli curl nginx",
+
+    "# 2. Tải và cài đặt NVM, Node/PM2, tải code từ S3 và Cấu hình Nginx để phục vụ ứng dụng React bằng quyền user ubuntu",
+    "sudo -u ubuntu -i bash << 'EOF'",
+    "curl -o $HOME/install_nvm.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh",
+    "chown ubuntu:ubuntu $HOME/install_nvm.sh",
+    ". $HOME/install_nvm.sh",
+    ". $HOME/.nvm/nvm.sh",
+    "export NVM_DIR=\"$HOME/.nvm\"",
+    "[ -s \"$NVM_DIR/nvm.sh\" ] && \\. \"$NVM_DIR/nvm.sh\"",
+
+    "nvm install 18",
+    "nvm use 18",
+    "aws s3 cp s3://my-custom-bucket-xyz-2026/web-tier $HOME/web-tier --recursive",
+    "cd $HOME/web-tier",
+    "sudo chmod -R 755 /home/ubuntu/web-tier",
+    "npm install",
+    "npm run build",
+
+    "cd /etc/nginx",
+    "sudo cp $HOME/web-tier/nginx.conf /etc/nginx/nginx.conf",
+    "REMOTE_SEARCH=\"\\[REPLACE-WITH-INTERNAL-LB-DNS\\]\"",
+    "REMOTE_REPLACE=\"[EC1_PRIVATE_IP]\"",
+    "REMOTE_TARGET=\"/etc/nginx/nginx.conf\"",
+    "sudo sed -i \"s/$REMOTE_SEARCH/$REMOTE_REPLACE/g\" \"$REMOTE_TARGET\"",
+    "sudo systemctl restart nginx",
+    "sudo systemctl status nginx",
+    "EOF"
+  ]
+}

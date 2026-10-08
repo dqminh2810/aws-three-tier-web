@@ -1,0 +1,29 @@
+{
+  "workingDirectory": ["/home/ubuntu"],
+  "commands": [
+    "#!/bin/bash",
+
+    "# 1. Cập nhật hệ thống bằng quyền root",
+    "sudo apt-get update -y",
+    "sudo apt-get install -y awscli curl",
+
+    "# 2. Tải và cài đặt NVM, Node/PM2, tải code từ S3 và chạy ứng dụng trực tiếp bằng quyền user ubuntu",
+    "sudo -u ubuntu -i bash << 'EOF'",
+    "curl -o $HOME/install_nvm.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh",
+    "chown ubuntu:ubuntu $HOME/install_nvm.sh",
+    ". $HOME/install_nvm.sh",
+    ". $HOME/.nvm/nvm.sh",
+    "export NVM_DIR=\"$HOME/.nvm\"",
+    "[ -s \"$NVM_DIR/nvm.sh\" ] && \\. \"$NVM_DIR/nvm.sh\"",
+
+    "nvm install 16",
+    "nvm use 16",
+    "npm install -g pm2",
+    
+    "aws s3 cp s3://my-custom-bucket-xyz-2026/app-tier $HOME/app-tier --recursive",
+    "cd $HOME/app-tier",
+    "npm install",
+    "pm2 start index.js",
+    "EOF"
+  ]
+}

@@ -15,16 +15,25 @@ const pool = new Pool({
     port: dbcreds.DB_PORT,
     user: dbcreds.DB_USER,
     password: dbcreds.DB_PWD,
-    database: dbcreds.DB_DATABASE
+    database: dbcreds.DB_DATABASE,
+    ssl: {
+        rejectUnauthorized: false 
+    }
 });
 
-function addTransaction(amount,desc){
-    var query = `INSERT INTO \`transactions\` (\`amount\`, \`description\`) VALUES ('${amount}','${desc}')`;
-    pool.query(query, function(err,result){
-        if (err) throw err;
-        console.log("Adding to the table should have worked");
+function addTransaction(amount,desc,callback){
+    var query = `INSERT INTO transactions (amount, description) VALUES ($1, $2) RETURNING *`;
+    pool.query(query, [amount, desc], function(err,result){
+        if (err) {
+            console.error("Database error:", err);
+            return callback(err, null); // Pass the error to the callback
+        }
+        console.log("Adding to the table worked");
+        
+        // Use result.rows for PostgreSQL, or just result for MySQL
+        const data = result.rows ? result.rows : result; 
+        return callback(null, data); 
     }) 
-    return 200;
 }
 
 function getAllTransactions(callback){

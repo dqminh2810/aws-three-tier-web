@@ -1,59 +1,55 @@
 #!/bin/bash
 set -e
 
+if [[ $# -ne 4 ]]; then
+    echo "Error Usage : $0 <SG_2_ID> <SUBNET_1> <SUBNET_4> <APP_TIER_LB_DNS_NAME>"
+    exit 1
+fi
+
 SG_2_ID=$1
 SUBNET_1=$2
 SUBNET_4=$3
-LB_DNS_NAME=$4
+APP_TIER_LB_DNS_NAME=$4
 
 # EC2 VM
-## Setup EC2 Instance - AZ1/us-east-1a
-EC3_INSTANCE_ID=$(awslocal ec2 run-instances \
-    --image-id ami-000001 \
-    --count 1 \
+## Setup EC2 Instance - AZ1/ap-southeast-1a
+EC3_INSTANCE_ID=$(aws ec2 run-instances \
+    --image-id ami-0532913178263be11 \
     --instance-type t3.micro \
-    --security-group-ids $SG_2_ID \
+    --count 1 \
     --subnet-id $SUBNET_1 \
-	--query 'Instances[0].InstanceId' \
-	--output text)
-
-awslocal ec2 wait instance-running --instance-ids $EC3_INSTANCE_ID
-EC3_PUBLIC_IP=$(awslocal ec2 describe-instances --instance-ids $EC3_INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
-
-## Setup EC2 Instance - AZ2/us-east-1c
-EC4_INSTANCE_ID=$(awslocal ec2 run-instances \
-    --image-id ami-000001 \
-    --count 1 \
-    --instance-type t3.micro \
     --security-group-ids $SG_2_ID \
-    --subnet-id $SUBNET_4 \
+    --associate-public-ip-address \
+	--iam-instance-profile Name="EC2-SSM-Role" \
 	--query 'Instances[0].InstanceId' \
 	--output text)
-	
-awslocal ec2 wait instance-running --instance-ids $EC4_INSTANCE_ID
-EC4_PUBLIC_IP=$(awslocal ec2 describe-instances --instance-ids $EC4_INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
 
+## Check EC2 status
+aws ec2 wait system-status-ok --instance-ids $EC3_INSTANCE_ID
+aws ec2 wait instance-status-ok --instance-ids $EC3_INSTANCE_ID
+while true; do
+    # Truy vấn trạng thái bài kiểm tra EBS đính kèm của dòng máy Nitro mới
+	EBS_CHECK=$(aws ec2 describe-instance-status \
+		--instance-ids "$EC3_INSTANCE_ID" \
+		--query "InstanceStatuses[0].AttachedEbsStatus.Status" \
+		--output text 2>/dev/null)
 
-# Debug ssh keys
-##this weird error showing unknow 'ssh-rsa ACCA' behind of authorized_keys
-##intercepting by docker to remove it
-CONTAINER_ID_EC3=$(docker ps -qaf \
-					"ancestor=localstack-ec2/ubuntu-22.04-jammy-jellyfish:ami-000001" \
-					| sed -n '2p')
-CONTAINER_ID_EC4=$(docker ps -qaf \
-					"ancestor=localstack-ec2/ubuntu-22.04-jammy-jellyfish:ami-000001" \
-					| sed -n '1p')
+	# Nếu bài check ổ đĩa báo "ok", nghĩa là đã đạt đủ 3/3 checks passed
+	if [ "$EBS_CHECK" = "ok" ]; then
+		echo "✅ Tuyệt vời! Ổ đĩa ổn định. Đã đạt trạng thái 3/3 checks passed!"
+		break
+	fi
 
-docker exec $CONTAINER_ID_EC3 cp root/.ssh/authorized_keys root/.ssh/tmp
-docker exec $CONTAINER_ID_EC4 cp root/.ssh/authorized_keys root/.ssh/tmp
+	echo "⏳ Bài check ổ cứng hiện tại: [$EBS_CHECK]. Đang đợi thêm 10 giây..."
+	sleep 10
+done
 
-docker exec $CONTAINER_ID_EC3 sed -i 's/ssh-rsa ACCA//g' root/.ssh/authorized_keys
-docker exec $CONTAINER_ID_EC4 sed -i 's/ssh-rsa ACCA//g' root/.ssh/authorized_keys
+EC3_PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $EC3_INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
 
-
-# Install EC2 instance dependencies
-source ./install-server-web-tier.sh ./my-key.pem root $EC3_PUBLIC_IP $LB_DNS_NAME
-source ./install-server-web-tier.sh ./my-key.pem root $EC4_PUBLIC_IP $LB_DNS_NAME
-
-# Create a docker image copy from EC2 instance container
-#docker commit -a "admin" -m "Installed neccessary dependencies" localstack-ec2.$EC3_INSTANCE_ID localstack-ec2/ubuntu-22.04-jammy-jellyfish:ami-000002
+## Install EC2 instance dependencies
+jq --arg dns_name "$APP_TIER_LB_DNS_NAME" '.commands[] |= gsub("\\[APP_TIER_LB_DNS_NAME\\]"; $dns_name)' install-server-web-tier.json > tmp.json
+# Connect via SSM
+aws ssm send-command \
+    --document-name "AWS-RunShellScript" \
+    --instance-ids "$EC3_INSTANCE_ID" \
+    --parameters file://tmp.json
