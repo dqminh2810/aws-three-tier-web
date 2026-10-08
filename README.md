@@ -2,22 +2,11 @@
 Build Secure, and High-Performance Web Applications scalable following 2 styles EKS or AutoScaling , with 3-Tier Architecture
 
 ## REQUIREMENT
-- localstack ver Pro
+- AWS CLI
 - docker
-- CLI aws / awslocal
 - terraform
   
 ## CHECK LIST AWS COMPONENTS
-#### APPLICATION COMPONENT
-- EC2 VM
-- RDS
-- S3
-
-#### NETWORK COMPONENT
-- ELB
-- INTERNET GATEWAY
-- NAT GATEWAY
-
 #### NETWORK MANAGEMENT ABSTRACTION
 - VPC
 - SUBNET
@@ -25,50 +14,47 @@ Build Secure, and High-Performance Web Applications scalable following 2 styles 
 - ROUTE TABLE
 - SECURITY GROUP
 
+#### NETWORK COMPONENT
+- ELB
+- INTERNET GATEWAY
+- NAT GATEWAY
+
+#### APPLICATION COMPONENT
+- EC2 VM
+- RDS
+- S3
+
+#### REMOTE ACCESS & ROLE PERMISSION MANAGEMENT  
+- SSM
+- IAM
+
 #### SCALE
 - EKS
 - AUTO SCALING
 
 ## SETUP
-### LocalStack Server
-- Update your LocalStack token [./docker-compose.yaml]
+### Standard Version with AWS CLI
+Applications deployed on EC2 & the infrastructure been setup with AWS CLI
 
-- `docker compose up` || `docker compose down` || `docker ps -qa | xargs docker rm`
+`./infrastructure/standard/aws-cli/setup.sh`
 
-### AWS Components - EKS Version
-#### LocalStack
-- `cd setup/eks && source setup.sh`
+### Standard Version with Terraform
+Applications deployed on EC2 & & the infrastructure been setup with Terraform
 
-- Follow `k8s.sh` to create k8s elements
+### EKS Version with AWS CLI
+Applications deployed on EKS & the infrastructure been setup with AWS CLI
 
-#### Terraform + AWS
-`Check it out`
-
-### AWS Components - Standard Verison (with AutoScaling)
-#### LocalStack
-- Update your DB address [./application-code/app-tier/DbConfig.js]
-
-- `cd setup/standard && source setup.sh`
-
-#### Terraform + AWS
-- `cd terraform/standard`
-
-- `terraform init`
-
-- `terraform plan`
-
-- `terraform apply`
-
-- `terraform destroy` 
+### EKS Version with Terraform
+Applications deployed on EKS & the infrastructure been setup with Terraform
 
 ## CHECK
 - Show output info - `cat output.txt`
 
-- Check db tier working - `curl <WEB_TIER_LB_DNS_NAME>:<4566:80>/api/transaction`
+- Check db tier working - `curl http://<EXTERNAL_LB_DNS_NAME>:80/api/transaction`
 
-- Check app tier health - `curl <WEB_TIER_LB_DNS_NAME>:<4566:80>/api/health`
+- Check app tier health - `curl http://<EXTERNAL_LB_DNS_NAME>:80/api/health`
 
-- Check web tier health - `curl <WEB_TIER_LB_DNS_NAME>:<4566:80>/health`
+- Check web tier health - `curl http://<EXTERNAL_LB_DNS_NAME>:80/health`
 
 ## ARCHITECTURE
 ### EKS

@@ -2,6 +2,7 @@
 set -e
 
 # Setup S3
+APPLICATION_CODE_DIR="$HOME/Code/aws-three-tier-web/application-code"
 BUCKET_NAME="my-custom-bucket-xyz-2026"
 if aws s3 ls "s3://$BUCKET_NAME" >/dev/null 2>&1; then
     echo "Success: Bucket '$BUCKET_NAME' exists and is accessible."
@@ -11,18 +12,18 @@ else
 	echo "Bucket '$BUCKET_NAME' created successfully."
 fi
 
-aws s3 sync /home/dqminh/Code/aws-three-tier-web/application-code s3://$BUCKET_NAME
+aws s3 sync $APPLICATION_CODE_DIR s3://$BUCKET_NAME
 
 # Setup AWS network
 source ./setup-network.sh
 
-# # Setup RDS
+# Setup RDS
 source ./setup-server-db-tier.sh $SG_5_ID $SUBNET_3 $SUBNET_6
 
-# # Setup EC2 Instance for app-tier
+# Setup EC2 Instance for app-tier
 source ./setup-server-app-tier.sh $SG_4_ID $SUBNET_2 $SUBNET_5
 
-# # Setup app-tier internal LB
+# Setup app-tier internal LB
 source ./setup-app-tier-internal-load-balancer.sh $VPC_ID $SG_3_ID $SUBNET_2 $SUBNET_5 $EC1_INSTANCE_ID
 
 # Setup EC2 Instance for web-tier
