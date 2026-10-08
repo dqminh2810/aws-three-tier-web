@@ -57,8 +57,8 @@ Applications deployed on EKS & the infrastructure been setup with Terraform
 - Check web tier health - `curl http://<EXTERNAL_LB_DNS_NAME>:80/health`
 
 ## ARCHITECTURE
-### EKS
-![Components_architecture_EKS](https://github.com/dqminh2810/aws-three-tier-web/blob/main/docs/eks-3-tier-architecture.png)
-
-### Standard vesrion - with Auto Scaling
+### Standard vesrion
 ![Components_architecture_ASG](https://github.com/dqminh2810/aws-three-tier-web/blob/main/docs/3-tier-architecture.png)
+
+### EKS version
+![Components_architecture_EKS](https://github.com/dqminh2810/aws-three-tier-web/blob/main/docs/eks-3-tier-architecture.png)
